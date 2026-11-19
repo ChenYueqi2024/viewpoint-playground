@@ -138,6 +138,10 @@ function update() {
   $('error').textContent=est?(Math.abs(est.z-state.z)/state.z*100).toFixed(2)+'%':'—';
   $('true-depth').textContent='真实深度 '+state.z.toFixed(2)+' m';
   $('projection-caption').textContent='L '+current.measured.left.toFixed(2)+' px · R '+current.measured.right.toFixed(2)+' px · 相差 '+disparity.toFixed(2)+' px';
+  $('knowledge-depth-values').textContent='当前 B = '+state.baseline.toFixed(2)+' m，f = '+state.focal.toFixed(0)+' px，Z = '+state.z.toFixed(2)+' m；理想视差 fB/Z = '+(state.focal*state.baseline/state.z).toFixed(2)+' px。实际测量视差见叠加图。';
+  const approximateSigma=Math.SQRT2*state.sigma*state.z**2/(state.focal*state.baseline);
+  $('knowledge-noise-values').textContent='当前参数的一阶深度标准差近似为 '+approximateSigma.toFixed(3)+' m。'+(approximateSigma/state.z>.1?'扰动相对深度已较大，请谨慎理解这个近似。':'这描述的是近似波动尺度，不是这一次必然偏移的距离。');
+  $('knowledge-fov-values').textContent='当前 f = '+state.focal.toFixed(0)+' px，对应水平视场角约 '+(2*Math.atan(SENSOR_WIDTH/(2*state.focal))*180/Math.PI).toFixed(1)+'°。';
   $('stereo-overlay').setAttribute('aria-label',$('projection-caption').textContent);
   const leftVisible=current.ideal.left>=0 && current.ideal.left<640, rightVisible=current.ideal.right>=0 && current.ideal.right<640;
   $('observation').textContent=!leftVisible || !rightVisible
@@ -188,7 +192,7 @@ $('burst').addEventListener('click',()=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden && burstTimer!==null)stopBurst('离开页面，已暂停连拍。');});
 $('reset').addEventListener('click',()=>{stopBurst();unlock();clearPreset();Object.assign(state,defaults);seed=2026;update();});
 $('export').addEventListener('click',()=>{
-  const record={schema_version:2,app_version:'0.2.0',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
+  const record={schema_version:2,app_version:'0.3.0',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
   const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewpoint-experiment.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 let dragging=null;
@@ -209,4 +213,12 @@ $('scene').addEventListener('pointermove',event=>{
 });
 for(const type of ['pointerup','pointercancel','lostpointercapture'])$('scene').addEventListener(type,()=>{dragging=null;});
 new ResizeObserver(()=>{drawScene();drawSensor('left');drawSensor('right');drawOverlay();drawChart();}).observe($('scene'));
+document.querySelectorAll('[data-explain]').forEach(button=>{
+  const panel=$('knowledge-'+button.dataset.explain);button.hidden=false;
+  panel.addEventListener('toggle',()=>button.setAttribute('aria-expanded',String(panel.open)));
+  button.addEventListener('click',()=>{
+    panel.open=!panel.open;button.setAttribute('aria-expanded',String(panel.open));
+    if(panel.open){panel.querySelector('summary').focus();panel.scrollIntoView({block:'start',behavior:'instant'});}
+  });
+});
 update();
