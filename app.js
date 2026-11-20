@@ -166,22 +166,26 @@ function clearPreset() {
   document.querySelectorAll('[data-preset]').forEach(button=>button.setAttribute('aria-pressed','false'));
   $('preset-hint').textContent=mission?'挑战模式：'+mission.hint:'自由实验：试试一次只改变一个旋钮，观察左右画面和视差。';
 }
+function showObservation() {
+  const rect=$('scene').getBoundingClientRect();
+  if(rect.top<0||rect.bottom>innerHeight)$('play').scrollIntoView({block:'start',behavior:'instant'});
+}
 function startMission(id) {
   stopBurst();mission=MISSIONS.find(item=>item.id===id);clearPreset();Object.assign(state,mission.parameters);seed=2026;
   for(const key of Object.keys(defaults))$(key).disabled=!mission.controls.includes(key);
   $('resample').disabled=true;$('burst').disabled=true;
   $('control-note').textContent='挑战使用固定条件，只开放本关需要的旋钮。';
-  update();$(mission.controls[0]).focus();
+  update();$(mission.controls[0]).focus();showObservation();
 }
 for(const key of Object.keys(defaults))$(key).addEventListener('input',event=>{stopBurst();clearPreset();state[key]=Number(event.target.value);update();});
 for(const id of ['show-fov','show-cloud'])$(id).addEventListener('change',update);
 document.querySelectorAll('[data-preset]').forEach(button=>button.addEventListener('click',()=>{
   stopBurst();unlock();clearPreset();const preset=PRESETS.find(item=>item.id===button.dataset.preset);
-  Object.assign(state,preset.parameters);seed=2026;button.setAttribute('aria-pressed','true');$('preset-hint').textContent=preset.hint;update();
+  Object.assign(state,preset.parameters);seed=2026;button.setAttribute('aria-pressed','true');$('preset-hint').textContent=preset.hint;update();showObservation();
 }));
 document.querySelectorAll('[data-mission]').forEach(button=>button.addEventListener('click',()=>startMission(button.dataset.mission)));
 $('next-challenge').addEventListener('click',()=>{const next=MISSIONS[MISSIONS.indexOf(mission)+1];if(next)startMission(next.id);});
-$('exit-challenge').addEventListener('click',()=>{unlock();clearPreset();update();$('baseline').focus();});
+$('exit-challenge').addEventListener('click',()=>{unlock();clearPreset();update();$('baseline').focus();showObservation();});
 $('resample').addEventListener('click',()=>{stopBurst();seed++;update();});
 $('burst').addEventListener('click',()=>{
   if(burstTimer!==null){stopBurst('连拍已暂停。');return;}
@@ -191,9 +195,9 @@ $('burst').addEventListener('click',()=>{
   burstTimer=setInterval(tick,650);tick();
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden && burstTimer!==null)stopBurst('离开页面，已暂停连拍。');});
-$('reset').addEventListener('click',()=>{stopBurst();unlock();clearPreset();Object.assign(state,defaults);seed=2026;update();});
+$('reset').addEventListener('click',()=>{stopBurst();unlock();clearPreset();Object.assign(state,defaults);seed=2026;update();showObservation();});
 $('export').addEventListener('click',()=>{
-  const record={schema_version:2,app_version:'0.4.1',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
+  const record={schema_version:2,app_version:'0.4.2',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
   const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewpoint-experiment.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 let dragging=null;
