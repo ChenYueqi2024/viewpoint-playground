@@ -4,7 +4,10 @@
 
 [在线体验](https://chenyueqi2024.github.io/viewpoint-playground/)
 
-## v0.3 功能
+## v0.4 功能
+
+- 星星观测站与预设、重采/连拍/重置按钮固定在实验区域内：桌面左右对照，窄屏顶部紧凑面板；滚动到三个挑战前自动结束固定。保留同一可拖动 canvas，可一边拖动一边看相机画面和指标。
+- 六组原创 SVG 概念图与折叠导览，串起位姿、SfM/MVS、NeRF/3DGS、DUSt3R/VGGT、3D 生成和 world model；每组附问题与一手资料，区分几何恢复、外观合成与生成补全。
 
 - 相机与星星拖动、等价键盘滑块；两种颜色的相机视野、左右模拟画面与视差叠加尺。
 - 近景 / 远景 / 手抖三个预设；参照物固定，便于比较水平投影变化。
@@ -23,6 +26,10 @@
 - [OpenCV 双目深度教程](https://docs.opencv.org/4.x/dd/d53/tutorial_py_depthmap.html)：本页深度/视差关系的基础资料。
 - [RAFT-Stereo 论文](https://arxiv.org/abs/2109.07547)与[作者代码](https://github.com/princeton-vl/RAFT-Stereo)：延伸了解真实校正双目图像的稠密匹配。
 - [COLMAP 项目](https://colmap.github.io/)与[官方论文引用](https://colmap.github.io/#citation)：延伸了解相机位姿、SfM 与 MVS。
+- [NeRF](https://www.matthewtancik.com/nerf) / [3DGS](https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/)：场景表示与新视角渲染。
+- [DUSt3R](https://arxiv.org/abs/2312.14132) / [VGGT](https://vgg-t.github.io/)：学习点图与前馈几何预测。
+- [DreamFusion](https://dreamfusion3d.github.io/) / [MVDream](https://arxiv.org/abs/2308.16512)：扩散先验与多视图一致的三维生成。
+- [Genie 2 官方博文](https://deepmind.google/blog/genie-2-a-large-scale-foundation-world-model/)：动作可控的生成环境，以及一致性与长期互动的局限。
 
 引用资料核对于 2026-11-20；本项目未运行或复现上述系统，引用不代表作者背书。页面不嵌入第三方内容，只有主动点击参考链接时才访问外部网站。
 
@@ -34,6 +41,8 @@
 数学与关卡测试：`npm test`（Node 18+）。
 
 九项自动测试覆盖投影与三角化、无效视差、视野边界、固定种子、近远对照、三关可达解及失败率约束。发布前另以浏览器验证 1440 / 768 / 390 / 320 px 的布局、键盘与拖动、关卡切换、连拍停止和 JSON 导出。
+
+v0.4 另验证这四种宽度下滚动到相机画面、指标后，固定星星仍能实际拖动并更新读数；挑战区不遮挡，六个研究卡片可展开、链接可访问，无横向溢出。科研导览可在禁用 JavaScript 时阅读。
 
 平行、相同内参的针孔相机，位置为 `(-B/2,0)` 和 `(B/2,0)`，朝 +Z；仅模拟 X–Z 平面。虚拟传感器宽 640 px、主点 320 px，世界长度单位 m。深度由 `Z=fB/(uL-uR)` 恢复。场景图为俯视示意，屏幕横纵比例不代表物理比例。
 
