@@ -34,7 +34,8 @@ function inScene(point) {return point && point.z<=16 && Math.abs(point.x)<=4;}
 function drawScene() {
   const {ctx,w,h}=surface('scene');ctx.font='14px "Segoe UI",sans-serif';
   for(let x=-4;x<=4;x++)line(ctx,world(w,h,x,0),world(w,h,x,16),'#293c59');
-  for(let z=0;z<=16;z+=2){line(ctx,world(w,h,-4,z),world(w,h,4,z),'#293c59');ctx.fillStyle=colors.muted;ctx.fillText(z+'m',3,world(w,h,0,z)[1]+4);}
+  const tickStep=h<140?8:h<220?4:2;
+  for(let z=0;z<=16;z+=2){line(ctx,world(w,h,-4,z),world(w,h,4,z),'#293c59');if(z%tickStep===0){ctx.fillStyle=colors.muted;ctx.fillText(z+'m',3,world(w,h,0,z)[1]+4);}}
   ctx.save();ctx.beginPath();ctx.rect(30,30,w-60,h-75);ctx.clip();
   if($('show-fov').checked) {
     for(const [position,color] of [[-state.baseline/2,'rgba(112,220,232,.12)'],[state.baseline/2,'rgba(246,165,203,.12)']]) {
@@ -192,7 +193,7 @@ $('burst').addEventListener('click',()=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden && burstTimer!==null)stopBurst('离开页面，已暂停连拍。');});
 $('reset').addEventListener('click',()=>{stopBurst();unlock();clearPreset();Object.assign(state,defaults);seed=2026;update();});
 $('export').addEventListener('click',()=>{
-  const record={schema_version:2,app_version:'0.4.0',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
+  const record={schema_version:2,app_version:'0.4.1',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
   const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewpoint-experiment.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 let dragging=null;

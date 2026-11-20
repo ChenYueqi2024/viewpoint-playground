@@ -7,7 +7,13 @@
 <div class="experiment-region" id="play"><div class="observation-station"><div class="panel-heading"><h2>星星观测站</h2><span>俯视 X–Z 平面 · 拖星星或相机</span></div>
 <canvas id="scene" role="img" aria-label="俯视示意：左右相机视野、目标星星与估计位置"></canvas>
 <section class="preset-section" aria-label="一键实验场景"><div class="preset-buttons"><button class="preset" data-preset="near" aria-pressed="false"><span aria-hidden="true">✦</span><b>星星在眼前</b><small>4 米 · 没有手抖</small></button><button class="preset" data-preset="far" aria-pressed="false"><span aria-hidden="true">✧</span><b>星星跑远了</b><small>12 米 · 同样的相机</small></button><button class="preset" data-preset="shake" aria-pressed="false"><span aria-hidden="true">≈</span><b>今天有点手抖</b><small>10 米 · 来点测量噪声</small></button></div><p id="preset-hint" class="small">先点一个场景，再拖动金色星星，或使用实验旋钮。</p></section>
-<div class="buttons"><button id="resample">重采一次</button><button id="burst" class="secondary" aria-pressed="false">连拍 8 次</button><button id="reset" class="secondary">重置实验</button></div><p class="dock-note">拖动星星，同时看右侧 / 下方的变化 ↓</p></div><section class="lab" aria-label="双目实验"><div class="scene-panel">
+<div class="buttons"><button id="resample">重采一次</button><button id="burst" class="secondary" aria-pressed="false">连拍 8 次</button><button id="reset" class="secondary">重置实验</button></div><aside class="controls"><h2>实验旋钮</h2><div class="knob-grid">
+<div class="knob"><label for="baseline">相机间距 B <output id="baseline-value"></output></label><input id="baseline" type="range" min="0.1" max="3" step="0.05" value="0.6"></div>
+<div class="knob"><label for="z">星星深度 Z <output id="z-value"></output></label><input id="z" type="range" min="2" max="15" step="0.1" value="8"></div>
+<div class="knob"><label for="x">星星横向位置 X <output id="x-value"></output></label><input id="x" type="range" min="-3" max="3" step="0.05" value="0"></div>
+<div class="knob"><label for="focal">焦距 f <output id="focal-value"></output></label><input id="focal" type="range" min="300" max="1000" step="10" value="700"></div>
+<div class="knob"><label for="sigma">手抖程度 σ <output id="sigma-value"></output></label><input id="sigma" type="range" min="0" max="4" step="0.1" value="1"></div>
+</div></aside><p class="dock-note">拖动或调节旋钮，同时看右侧 / 下方的变化 ↓</p></div><section class="lab" aria-label="双目实验"><div class="scene-panel">
 <div class="legend"><span class="truth">★ 真实星星</span><span class="estimate">◇ 本次估计</span><span class="left-color">L 左相机</span><span class="right-color">R 右相机</span></div>
 <div class="view-options"><label><input id="show-fov" type="checkbox" checked>显示相机视野</label><label><input id="show-cloud" type="checkbox" checked>显示 48 次估计</label></div><p id="cloud-summary" class="small"></p><button class="knowledge-link" data-explain="noise" aria-controls="knowledge-noise" aria-expanded="false" hidden>这些散点在说什么？</button>
 <div class="sensor-pair"><div><h3><span class="left-color">L</span> 左相机画面</h3><canvas id="left-sensor" role="img" aria-label="左相机中的星星和参照物水平投影"></canvas></div><div><h3><span class="right-color">R</span> 右相机画面</h3><canvas id="right-sensor" role="img" aria-label="右相机中的星星和参照物水平投影"></canvas></div></div>
@@ -15,15 +21,9 @@
 <div class="overlay-panel"><h3>把左右位置叠到同一把尺子上</h3><canvas id="stereo-overlay" role="img" aria-label="左右星星水平坐标叠加，连线长度表示测量视差"></canvas><p id="projection-caption" class="small"></p><button class="knowledge-link" data-explain="depth" aria-controls="knowledge-depth" aria-expanded="false" hidden>为什么视差能告诉我远近？</button></div>
 </div>
 <section class="metrics" aria-label="当前测量结果"><div><span>左右相差多少？</span><strong id="disparity">—</strong><small>测量视差 d</small></div><div><span>估计星星有多远？</span><strong id="depth">—</strong><small id="true-depth">—</small></div><div><span>这一次偏了多少？</span><strong id="error">—</strong><small>单次样本，不代表总体效果</small></div></section>
-<aside class="controls"><h2>实验旋钮</h2><p id="control-note" class="small">相机一左一右，像你的两只眼睛。</p>
-<label for="baseline">相机间距 B <output id="baseline-value"></output></label><input id="baseline" type="range" min="0.1" max="3" step="0.05" value="0.6">
-<label for="z">星星深度 Z <output id="z-value"></output></label><input id="z" type="range" min="2" max="15" step="0.1" value="8">
-<label for="x">星星横向位置 X <output id="x-value"></output></label><input id="x" type="range" min="-3" max="3" step="0.05" value="0">
-<label for="focal">焦距 f <output id="focal-value"></output></label><input id="focal" type="range" min="300" max="1000" step="10" value="700"><button class="knowledge-link" data-explain="fov" aria-controls="knowledge-fov" aria-expanded="false" hidden>焦距大，为什么反而看不见？</button>
-<label for="sigma">手抖程度 σ <output id="sigma-value"></output></label><input id="sigma" type="range" min="0" max="4" step="0.1" value="1">
-<p class="small">左右测量各加入独立高斯噪声。滑动时固定噪声样本，让比较更公平。</p><p id="burst-status" class="small" role="status"></p><p id="observation" class="notice" aria-live="polite"></p>
+<div class="experiment-feedback"><p id="control-note" class="small">相机一左一右，像你的两只眼睛。</p><button class="knowledge-link" data-explain="fov" aria-controls="knowledge-fov" aria-expanded="false" hidden>焦距大，为什么反而看不见？</button><p class="small">左右测量各加入独立高斯噪声。滑动时固定噪声样本，让比较更公平。</p><p id="burst-status" class="small" role="status"></p><p id="observation" class="notice" aria-live="polite"></p>
 <div class="live-mission" id="live-mission" hidden><span class="eyebrow">挑战进行中</span><h3 id="live-mission-title"></h3><p id="live-mission-goal"></p><p id="live-mission-status" aria-live="polite"></p><button id="exit-challenge" class="secondary">回到自由实验</button></div>
-</aside></section></div>
+</div></section></div>
 <section class="challenge" id="missions"><div class="mission-heading"><div><p class="eyebrow">LEARN BY PLAYING</p><h2>带着三个问题，再玩一次。</h2></div><p id="mission-progress" class="mission-progress">已点亮 0 / 3 枚徽章</p></div><div class="mission-grid">
 <article class="mission-card" data-mission-card="distance"><span class="mission-badge" id="badge-distance" aria-label="远近观察员，尚未完成">✧</span><h3>星星去哪了</h3><p>星星变远，左右画面的差别会怎么变？</p><button data-mission="distance" class="secondary">挑战远近</button></article>
 <article class="mission-card" data-mission-card="steady"><span class="mission-badge" id="badge-steady" aria-label="稳稳测距员，尚未完成">◇</span><h3>给手抖一点距离</h3><p>相机站远一点，测量就能更稳一点吗？</p><button id="challenge" data-mission="steady" class="secondary">挑战测距</button></article>
