@@ -197,7 +197,7 @@ $('burst').addEventListener('click',()=>{
 document.addEventListener('visibilitychange',()=>{if(document.hidden && burstTimer!==null)stopBurst('离开页面，已暂停连拍。');});
 $('reset').addEventListener('click',()=>{stopBurst();unlock();clearPreset();Object.assign(state,defaults);seed=2026;update();showObservation();});
 $('export').addEventListener('click',()=>{
-  const record={schema_version:2,app_version:'0.4.2',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
+  const record={schema_version:2,app_version:'0.4.3',model:'rectified stereo, horizontal X-Z plane',units:{world:'m',image:'px'},parameters:{...state},seed,current,summary:stats,baselineSweep:curve,displaySamples:{trials:48,estimates:cloud},lesson:{active:mission?.id??null,completed:[...completed]},noise:'Independent Gaussian pixel noise; shared standard samples across baseline values; seed uses LCG + Box-Muller.'};
   const url=URL.createObjectURL(new Blob([JSON.stringify(record,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='viewpoint-experiment.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 let dragging=null;

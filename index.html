@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="两只眼睛，怎么知道星星有多远？拖动相机、观察视差、给测量加一点手抖，在三个小挑战里发现双目视觉的秘密。"><title>视角游乐场 · Yueqi</title><link rel="stylesheet" href="style.css?v=0.4.2"><script type="module" src="app.js?v=0.4.2"></script></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="两只眼睛，怎么知道星星有多远？拖动相机、观察视差、给测量加一点手抖，在三个小挑战里发现双目视觉的秘密。"><title>视角游乐场 · Yueqi</title><link rel="stylesheet" href="style.css?v=0.4.3"><script type="module" src="app.js?v=0.4.3"></script></head>
 <body><header><a href="https://chenyueqi2024.github.io/life/">Yueqi / 造物角</a><a href="https://github.com/ChenYueqi2024/viewpoint-playground">开源代码</a></header>
 <main>
 <section class="intro"><div><p class="eyebrow">A LITTLE LAB FOR YOUR CURIOSITY · v0.4</p><h1>两只眼睛，<br>一颗<span>小星星。</span></h1><p>怎么知道它有多远？摆一摆相机，看看左右画面有什么不一样。</p><p class="scope">平行双目 · 合成几何实验 · 无需安装，打开就能玩</p></div><a class="challenge-invite" href="#missions"><span aria-hidden="true">✦</span><b>三个小挑战</b><span>从“看见”到“看懂”</span></a></section>
@@ -13,7 +13,7 @@
 <div class="knob"><label for="x">星星横向 X <output id="x-value"></output></label><input id="x" type="range" min="-3" max="3" step="0.05" value="0"></div>
 <div class="knob"><label for="focal">焦距 f <output id="focal-value"></output></label><input id="focal" type="range" min="300" max="1000" step="10" value="700"></div>
 <div class="knob"><label for="sigma">手抖程度 σ <output id="sigma-value"></output></label><input id="sigma" type="range" min="0" max="4" step="0.1" value="1"></div>
-</div></aside><p class="dock-note">拖动或调节旋钮，同时看右侧 / 下方的变化 ↓</p></div></div><section class="lab" aria-label="双目实验"><div class="scene-panel">
+</div></aside><p class="dock-note">拖动或调节旋钮，同时观察右侧的变化 →</p></div></div><section class="lab" aria-label="双目实验"><div class="scene-panel">
 <div class="legend"><span class="truth">★ 真实星星</span><span class="estimate">◇ 本次估计</span><span class="left-color">L 左相机</span><span class="right-color">R 右相机</span></div>
 <div class="view-options"><label><input id="show-fov" type="checkbox" checked>显示相机视野</label><label><input id="show-cloud" type="checkbox" checked>显示 48 次估计</label></div><p id="cloud-summary" class="small"></p><button class="knowledge-link" data-explain="noise" aria-controls="knowledge-noise" aria-expanded="false" hidden>这些散点在说什么？</button>
 <div class="sensor-pair"><div><h3><span class="left-color">L</span> 左相机画面</h3><canvas id="left-sensor" role="img" aria-label="左相机中的星星和参照物水平投影"></canvas></div><div><h3><span class="right-color">R</span> 右相机画面</h3><canvas id="right-sensor" role="img" aria-label="右相机中的星星和参照物水平投影"></canvas></div></div>
